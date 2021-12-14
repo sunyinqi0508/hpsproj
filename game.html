@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <head>
+        <!-- <base href="http://cims.nyu.edu/drecco2016/"> -->
+        <script src="js/jquery-2.2.4.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.11/p5.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.11/addons/p5.dom.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.11/addons/p5.sound.min.js"></script>
+        <script src="./script.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.css"/>
+        <link rel="stylesheet" type="text/css" href="css/game.css"/>
+    </head>
+    <body>
+        <div class="container-fluid"> 
+            <h1 class="page-header game-title"> Hockey Game </h1> 
+
+            <div class="information-container col-sm-3">
+                <div class="information col-sm-10">
+                    <h2 class="information-header"> Game information </h2>
+                    <div class="info-form">
+                        <label for="player-1"> Player Names </label>
+                        <input type="text" class="form-control info-input" id="player-1">
+                        <input type="text" class="form-control info-input" id="player-2">
+                    </div>
+
+
+                     <div class="form-horizontal">
+                        <label> Width/Height of Board (px) </label>
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <input  type="number" id="width-of-board" class="form-control info-input" value="700"> 
+                            </div>       
+                            <div class="col-sm-6">
+                                <input  type="number" id="height-of-board" class="form-control info-input"  value="400">
+                            </div>
+                        </div>
+                    </div>
+
+                     <div class="info-form">
+                        <label for="total-materials"> Total Materials</label>
+                        <input type="number" class="form-control info-input" id="total-materials" value="600">
+                    </div>
+                    <div class="info-form">
+                        <label for="tmax"> Total Time</label>
+                        <input type="number" class="form-control info-input" id="tmax" value="120">
+                    </div>
+                    <div class="info-form">
+                        <label for="max-wall-len"> Max/Min Wall Length</label>
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <input type="number" class="form-control info-input" id="max-wall-len" value="50">
+                            </div>
+                            <div class="col-sm-6">
+                                <input type="number" class="form-control info-input" id="min-wall-len" value="10">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-form">
+                        <label for="cd-add"> Add/Del Wall cool-down </label>
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <input type="number" class="form-control info-input" id="cd-add" value="1">
+                            </div>
+                            <div class="col-sm-6">
+                                <input type="number" class="form-control info-input" id="cd-del" value="5">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-form">
+                        <label for="game-speed"> Game Speed </label>
+                        <input type="number" class="form-control info-input" id="game-speed" value="5">
+                    </div>
+                     <div class="col-sm-12 alert alert-danger alert-dismissable" id="error-container">
+                        <a href="#" class="close" aria-label="close">&times;</a>
+                        <p id="error-message"> </p>
+                    </div>
+                    <div class="btn-container col-sm-12">
+                        <button type="button" class="start-game btn btn-primary" onclick="startGame();">Start new game</button>
+                    </div>
+
+                   
+                </div>
+            </div>
+            <div class="game col-sm-9" id='game-container'>
+
+            </div>
+        </div>
+    </body>
+
+    <script>
+        $('.close').on('click', function() {
+            $(this).parent().hide();
+            console.log('worked');
+        });
+
+    </script>
+</html>
