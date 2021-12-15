@@ -42,7 +42,7 @@
                 After Tmax seconds, the game stops.
             </p>
             <p>
-                Press <Strong>Z</strong> to change wall directions and <strong>D</strong>
+                Press <strong>Z</strong> to change wall directions and <strong>D</strong>
             </p>
         </div>
 

@@ -68,7 +68,7 @@ let vBall = 15;
 let pBall = [0, 0];
 let dBall = [1,1];
 let Tmax = 0;
-let sDecay = 0.1, decay = [0,0], decayStart;
+let sDecay = 0, decay = [0,0], decayStart;
 let directions = [[1, 1], [1, -1], [-1, -1], [-1, 1]]; 
 let TH = 8;
 let msgctrl, timectrl, statectrl, button;
@@ -223,7 +223,7 @@ function startGame() {
     CD_del = getAttrib("cd-del");
     maxWallLen = getAttrib("max-wall-len"); 
     minWallLen = getAttrib("min-wall-len");
-    sDecay = getAttribf("sdecay");
+    //sDecay = getAttribf("sdecay");
     vBall = getAttrib("game-speed"); 
     Tmax = getAttrib("tmax"); 
     button = document.getElementById("start");
@@ -254,6 +254,9 @@ function startGame() {
 
     players[1].scorelabel.innerHTML = ""+0;
     players[1].color = '#FFBBC6';
+    players[1].other = players[0];
+    players[0].other = players[1];
+
     document.getElementById("p2-name").innerHTML = player2;
     decay = [0, 0];
     cursors = [new Wall([0,0], 25, 1, -1, players[0]), new Wall([0,0], 25, 0, -2, players[1])];
@@ -416,8 +419,10 @@ function hitTest(lr, loc, remove = false){
             len = wallsR.pop().len;
         }
     }
-    if (len > 0)
+    if (len > 0){
         cursor.player.delete = false;
+        cursor.player.materials += len;
+    }
     
     len = len == 0 && minid >= 0 ? 1 : len;
     
