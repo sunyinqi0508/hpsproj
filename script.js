@@ -50,7 +50,6 @@ class Player {
         this.cd_delete = NaN;
         this.delete = false;
         this.cd_add = 0;
-        
         this.walls = walls;
         this.materials = materials;
     }
@@ -68,9 +67,12 @@ let time = 0;
 let vBall = 15;
 let pBall = [0, 0];
 let dBall = [1,1];
+let Tmax = 0;
+let sDecay = 0.1, decay = [0,0], decayStart;
 let directions = [[1, 1], [1, -1], [-1, -1], [-1, 1]]; 
 let TH = 8;
-function clamp(x, a, b){
+let msgctrl, timectrl, statectrl, button;
+function clamp(x, a, b=Infinity){
     return x < a? a: (x > b? b:x);
 }
 function plus(a, b, c = 1){
@@ -101,40 +103,57 @@ function trim(a){
 }
 function setup() {
     canvas = createCanvas(gameWidth, gameHeight);
+    statectrl = document.getElementById('state');
+    msgctrl = document.getElementById('msg');
+    timectrl = document.getElementById('time');
     canvas.parent('game-container');
     disableScroll();
     canvas.canvas.addEventListener('mousemove', (e)=>{
-        if (inGame){
-            if(!cursor.player.delete)
+        if (inGame && !gameEnded){
+            if(!cursor.player.delete){
                 cursor = cursors[e.offsetX<=gameWidth/2?0:1];
+                statectrl.innerHTML = cursor.player.name + " Adding Wall.";
+            }
+            else
+                statectrl.innerHTML = cursor.player.name + " Removing Wall";
+            statectrl.style.color = cursor.player.color;
             cursor.pos[0] = e.offsetX;
             cursor.pos[1] = e.offsetY;
         }
     });
     canvas.canvas.addEventListener('wheel', (e)=>{
-        if(inGame){
+        if(inGame && !gameEnded){
             cursor.len = clamp(cursor.len + Math.sign(e.deltaY), minWallLen, maxWallLen);
         }
     });
     canvas.canvas.addEventListener("click", (e) => {
-        if(inGame){
+        if(inGame && !gameEnded){
             if(cursor.player.delete){
                 if (hitTest(cursor.id+3, cursor.pos, true))
-                    ;
+                {
+                    cursor.player.cd_delete = CD_del;
+                    cursor.player.cdrmlabel.style.color = "#ff0000";
+                    cursor.player.cdrmlabel.innerHTML = '' + CD_del+'s Left.';
+                }
             }
             else if(cursor.player.cd_add<=0 && cursor.player.materials >= cursor.len){
                 cursor.player.materials -= cursor.len;
+                cursor.player.materiallabel.style.width = '' + (100*cursor.player.materials/totalMaterials) + '%';
                 let walls = (cursor.id == -1)?
                     wallsL:wallsR;
                 walls.push(cursor.copy(walls.length));
                 if(isNaN(players[cursor.id + 2].cd_delete))
+                {
                     players[cursor.id + 2].cd_delete = CD_del;
+                }
                 cursor.player.cd_add = CD_add;
+                cursor.player.cdaddlabel.style.color = '#ff0000';
+                cursor.player.cdrmlabel.innerHTML = '' + CD_add+'s Left.';
             }
         }
     });
     window.addEventListener("keypress", (e)=>{
-        if(inGame){
+        if(inGame && !gameEnded){
             if (e.code == 'KeyD')
                 if(cursor.player.cd_delete <= 0)
                     cursor.player.delete = !cursor.player.delete;
@@ -165,28 +184,78 @@ function draw() {
     }
 }
 function getAttrib(str){
+    let ele = document.getElementById(str);
+    ele.readOnly = true;
     return parseInt(document.getElementById(str).value);
 }
+function getAttribf(str){
+    let ele = document.getElementById(str);
+    ele.readOnly = true;
+    return parseFloat(document.getElementById(str).value);
+}
+function endGame(){
+    gameEnded = true;
+    let button = document.getElementById("start");
+    button.innerHTML = "Start New Game";
+    button.onclick = startGame;
+    gameWidth = document.getElementById("width-of-board").readOnly = false;    
+    gameHeight = document.getElementById("height-of-board").readOnly = false;
+    totalMaterials = document.getElementById("total-materials").readOnly = false;
+    CD_add = document.getElementById("cd-add").readOnly = false;
+    CD_del = document.getElementById("cd-del").readOnly = false;
+    maxWallLen = document.getElementById("max-wall-len").readOnly = false; 
+    minWallLen = document.getElementById("min-wall-len").readOnly = false;
+    vBall = document.getElementById("game-speed").readOnly = false; 
+    Tmax = document.getElementById("tmax").readOnly = false; 
+}
+
 function startGame() {
     message = '';
     player1 = document.getElementById("player-1").value;
     player2 = document.getElementById("player-2").value;
-    gameWidth = getAttrib("width-of-board");
+    player1 = player1 == ''? "Player 1": player1; 
+    player2 = player2 == ''? "Player 2": player2; 
+    statectrl.innerHTML = 'Game Started.';
+    gameWidth = getAttrib("width-of-board");    
     gameHeight = getAttrib("height-of-board");
     totalMaterials = getAttrib("total-materials");
     CD_add = getAttrib("cd-add");
     CD_del = getAttrib("cd-del");
     maxWallLen = getAttrib("max-wall-len"); 
     minWallLen = getAttrib("min-wall-len");
+    sDecay = getAttribf("sdecay");
     vBall = getAttrib("game-speed"); 
     Tmax = getAttrib("tmax"); 
+    button = document.getElementById("start");
+    button.innerHTML = "End Game";
+    button.onclick = endGame;
+    
     wallsL = []; wallsR = [];
     canvas.resize(gameWidth, gameHeight);   
     pBall[0] = gameWidth/2;
     pBall[1] = gameHeight/2;
     dBall = directions[Math.floor(Math.random()*4)].slice();
     players[0] = new Player(0, wallsL, totalMaterials, player1);
+    players[0].scorelabel = document.getElementById("p1-score");
+    players[0].cdaddlabel = document.getElementById("p1-cdadd");
+    players[0].cdrmlabel = document.getElementById("p1-cdrm");
+    players[0].materiallabel = document.getElementById("p1ml");
+    players[0].materiallabel.style.size = '100%';
+    players[0].scorelabel.innerHTML = ""+0;
+    players[0].color = '#99D6D3';
+    document.getElementById("p1-name").innerHTML = player1;
+    
     players[1] = new Player(1, wallsR, totalMaterials, player2);
+    players[1].scorelabel = document.getElementById("p2-score");
+    players[1].cdaddlabel = document.getElementById("p2-cdadd");
+    players[1].cdrmlabel = document.getElementById("p2-cdrm");
+    players[1].materiallabel = document.getElementById("p2ml");
+    players[1].materiallabel.style.size = '100%';
+
+    players[1].scorelabel.innerHTML = ""+0;
+    players[1].color = '#FFBBC6';
+    document.getElementById("p2-name").innerHTML = player2;
+    decay = [0, 0];
     cursors = [new Wall([0,0], 25, 1, -1, players[0]), new Wall([0,0], 25, 0, -2, players[1])];
     cursor = cursors[0];
     startTime = time = Date.now();
@@ -237,7 +306,8 @@ function bounce(delta){
     }
     if (end[0]<=0 || end[0] >= gameWidth){
         if(boundCheck(1)){
-            ++ players[startingPoint[0] != 0];
+            players[0+(end[0] <= 1e-8)].score += 1;
+            players[0+(end[0] <= 1e-8)].scorelabel.innerHTML = ''+players[0+(end[0] <= 1e-8)].score.toFixed(2);
         }
     }
     if (isFinite(mindist)){
@@ -256,15 +326,56 @@ function tick(){
     let curr = Date.now();
     let delta = (curr - time)/1000;
     time = curr;
+    let lastx = pBall[0];
     players.forEach((p)=>{
         if(!isNaN(p.cd_add))
+        {
             p.cd_add = clamp(p.cd_add - delta, 0, CD_add);
-        if(!isNaN(p.cd_delete))
+            if(p.cd_add == 0){
+                p.cdaddlabel.style.color = '#00ff00';
+                p.cdaddlabel.innerHTML = 'Ready.';
+            }
+            else {
+                p.cdaddlabel.innerHTML = '' + p.cd_add.toFixed(3) + 's Left.';
+            }
+        }
+        if(!isNaN(p.cd_delete)){
             p.cd_delete = clamp(p.cd_delete - delta, 0, CD_del);
+            if(p.cd_delete == 0){
+                p.cdrmlabel.style.color = '#00ff00';
+                p.cdrmlabel.innerHTML = 'Ready.';
+            }
+            else
+                p.cdrmlabel.innerHTML = '' + p.cd_delete.toFixed(3) + 's Left.';
+        }
     });
     bounce(delta);
+    let moved = lastx < gameWidth/2 ^ pBall[0] < gameWidth/2;
+    if(moved){
+        decay[pBall<gameWidth/2] = 0;
+        decayStart = curr;
+    }
+    else{
+        let pid= 0 + (lastx<gameWidth/2);
+        if (parseInt((curr - decayStart)/1000) > decay[pid]){
+            decay[pid] = parseInt((curr - decayStart)/1000);
+            players[pid].score += sDecay;
+            players[pid].scorelabel.innerHTML = ''+players[pid].score.toFixed(2);
+        }
+    }
+    timectrl.innerHTML = "Time Left: " + clamp((Tmax - (curr - startTime)/1000).toFixed(3),0) + 's. ';
     if((curr - startTime)/1000>= Tmax)
+    {
         gameEnded = true;
+        statectrl.innerHTML = 'Game Ended. '; 
+        if(players[0].score == players[1].score)
+            statectrl.innerHTML += 'Tied.'
+        else {
+            player = players[0].score > players[1].score ? players[0] : players[1];
+            statectrl.style.color = '#ff0000';
+            statectrl.innerHTML += '<strong>'+player.name + '</strong> wins.';
+        }
+    }
 }
 function hitTest(lr, loc, remove = false){
     let mindist = gameHeight*gameHeight + gameWidth*gameWidth;

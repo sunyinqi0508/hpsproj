@@ -20,8 +20,14 @@
                     <h2 class="information-header"> Game information </h2>
                     <div class="info-form">
                         <label for="player-1"> Player Names </label>
-                        <input type="text" class="form-control info-input" id="player-1">
-                        <input type="text" class="form-control info-input" id="player-2">
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control info-input" id="player-1" sytle='min-width:45%'>
+                            </div>       
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control info-input" id="player-2" sytle='min-width:45%'>
+                            </div>
+                        </div>
                     </div>
 
 
@@ -32,7 +38,7 @@
                                 <input  type="number" id="width-of-board" class="form-control info-input" value="700"> 
                             </div>       
                             <div class="col-sm-6">
-                                <input  type="number" id="height-of-board" class="form-control info-input"  value="400">
+                                <input  type="number" id="height-of-board" class="form-control info-input"  value="340">
                             </div>
                         </div>
                     </div>
@@ -44,6 +50,10 @@
                     <div class="info-form">
                         <label for="tmax"> Total Time</label>
                         <input type="number" class="form-control info-input" id="tmax" value="120">
+                    </div>
+                    <div class="info-form">
+                        <label for="tmax"> Decay</label>
+                        <input type="number" class="form-control info-input" id="sdecay" value="0.05">
                     </div>
                     <div class="info-form">
                         <label for="max-wall-len"> Max/Min Wall Length</label>
@@ -64,27 +74,63 @@
                                 <input type="number" class="form-control info-input" id="cd-add" value="1">
                             </div>
                             <div class="col-sm-6">
-                                <input type="number" class="form-control info-input" id="cd-del" value="5">
+                                <input type="number" class="form-control info-input" id="cd-del" value="25">
                             </div>
                         </div>
                     </div>
                     <div class="info-form">
                         <label for="game-speed"> Game Speed </label>
-                        <input type="number" class="form-control info-input" id="game-speed" value="5">
+                        <input type="number" class="form-control info-input" id="game-speed" value="85">
                     </div>
                      <div class="col-sm-12 alert alert-danger alert-dismissable" id="error-container">
                         <a href="#" class="close" aria-label="close">&times;</a>
                         <p id="error-message"> </p>
                     </div>
                     <div class="btn-container col-sm-12">
-                        <button type="button" class="start-game btn btn-primary" onclick="startGame();">Start new game</button>
+                        <button id = 'start' type="button" class="start-game btn btn-primary" onclick="startGame();">Start new game</button>
                     </div>
 
                    
                 </div>
             </div>
             <div class="game col-sm-9" id='game-container'>
+                <div  style="background-color: #dfdfdf;">
+                    <h2 class="information-header;" style="margin-bottom: 1%;">Game Status</h2>
+                    <label>Message: </label><label id='msg'></label><br>
+                    <label id='time'></label> <br>
+                    <label>State: </label>
+                    <label id='state'>Ready.</label>
+                    <div class="form-group">
+                        <label id="p1-name"> Player 1: </label> <br>
+                        <label style="margin-left: 2.5%;">Add: </label>
+                        <label id="p1-cdadd" style="color:#00ff00; min-width: max-content;"> Ready. </label>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <label>Remove: </label>
+                        <label id="p1-cdrm" style="color:#ff0000; min-width: max-content;"> Wait for walls. </label>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <label>Score: </label>
+                        <label id="p1-score" style="min-width: max-content;"> Not started. </label>&nbsp;&nbsp;&nbsp;&nbsp;
 
+                        <div style="background-color: #eeeeee; width: 95%; height: auto; margin-left: auto;margin-right: auto; border-radius: 10px;">
+                            <div style="background-color: #99D6D3; width: 100%; color: #777777; text-align: center; border-radius: 10px;max-height: 100%" id="p1ml">Materials Left</div>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <label id="p2-name" style="margin-left: auto; margin-right: auto; text-align: center;"> Player 2: </label> <br>
+                        <label style="margin-left: 2.5%;">Add: </label>
+                        <label id="p2-cdadd" style="color:#00ff00; min-width: max-content;"> Ready. </label>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <label>Remove: </label>
+                        <label id="p2-cdrm" style="color:#ff0000; min-width: max-content;"> Wait for walls. </label>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <label>Score: </label>
+                        <label id="p2-score" style="min-width: max-content;"> Not started. </label>&nbsp;&nbsp;&nbsp;&nbsp;
+
+                        <div style="background-color: #eeeeee; width: 95%; height: auto; margin-left: auto;margin-right: auto; border-radius: 10px;">
+                            <div style="background-color: #FFBBC6; width: 100%; color: #777777; text-align: center; border-radius: 10px;max-height: 100%" id="p2ml">Materials Left</div>
+                        </div>
+                        <label> </label>
+
+                    </div>
+
+                </div>
             </div>
         </div>
     </body>
