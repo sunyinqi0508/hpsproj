@@ -2,7 +2,6 @@
 <html>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <head>
-        <!-- <base href="http://cims.nyu.edu/drecco2016/"> -->
         <script src="js/jquery-2.2.4.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.11/p5.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.11/addons/p5.dom.min.js"></script>
@@ -13,25 +12,62 @@
     </head>
     <body>
         <div class="container-fluid"> 
-            <h1 class="page-header game-title"> Hockey Game </h1> 
 
             <div class="information-container col-sm-3">
                 <div class="information col-sm-10">
-                    <h2 class="information-header"> Game information </h2>
+                    
+                    <h2 class="information-header"> Game Config </h2>
                     <div class="info-form">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <button id = 'scr' type="button" class="start-game btn btn-primary" style="border: none; outline: none; background-color: #7DC97B;" onclick="scroll_disabled?enableScroll():disableScroll();">Scrollable</button>
+                                </div>       
+                                <div class="col-sm-6">
+                                    <button id = 'start' type="button" class="start-game btn btn-primary" style="margin-right: 10px; border: none; outline: none;" onclick="startGame();">Start Multi</button>
+                                </div>
+                            </div>
+                            <div class="form-group" style="margin-left: 3px;">
+                                <div class="col-sm-6">
+                                    <button id = 'scr' type="button" class="start-game btn btn-primary" style="border: none; outline: none;" onclick="startSingle()">Start Single</button>
+                                </div>       
+                                <div class="col-sm-6">
+                                    <button id = 'start' type="button" class="start-game btn btn-primary" style="margin-right: 10px; border: none; outline: none;" onclick="startAI();">Versus A.I.</button>
+                                </div>
+                            </div>
+                        </div>
                         <label for="player-1"> Player Names </label>
-                        <div class="form-group">
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control info-input" id="player-1" sytle='min-width:45%'>
-                            </div>       
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control info-input" id="player-2" sytle='min-width:45%'>
+                        <div class="info-form">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-sm-6">
+                                        <div class="form-horizontal">
+                                            <div class="form-group">
+                                                <div class="col-sm-9" style="padding-right: 0;">
+                                                    <input type="text" class="form-control info-input" id="player-1" sytle='min-width:100%;padding-right:0;'>
+                                                </div>
+                                                <div class="col-sm-3" style="padding-left: 3px;">
+                                                    <input type="color" id="p1-color" style='-webkit-appearance: none;border: none;width: 32px;height: 32px;padding: 0;margin-left: 0;' value="#99D6D3">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6" style="padding-left: 5px;">
+                                        <div class="form-group">
+                                            <div class="col-sm-9" style="padding-right: 0;">
+                                                <input type="text" class="form-control info-input" id="player-2" sytle='max-width:25%'>
+                                            </div>
+                                            <div class="col-sm-3" style="padding-left: 3px;">
+                                                <input type="color" id="p2-color" style='-webkit-appearance: none;border: none;width: 32px;height: 32px;padding: 0;margin-left: 0;' value="#FFBBC6">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-
-                     <div class="form-horizontal">
+                     <div class="form-horizontal" style="margin-top: -25px;">
                         <label> Width/Height of Board (px) </label>
                         <div class="form-group">
                             <div class="col-sm-6">
@@ -64,71 +100,102 @@
                             <div class="col-sm-6">
                                 <input type="number" class="form-control info-input" id="min-wall-len" value="10">
                             </div>
+
                         </div>
+
                     </div>
 
                     <div class="info-form">
                         <label for="cd-add"> Add/Del Wall cool-down </label>
                         <div class="form-group">
                             <div class="col-sm-6">
-                                <input type="number" class="form-control info-input" id="cd-add" value="1">
+                                <input type="number" class="form-control info-input" id="cd-add" value=".3">
                             </div>
                             <div class="col-sm-6">
-                                <input type="number" class="form-control info-input" id="cd-del" value="25">
+                                <input type="number" class="form-control info-input" id="cd-del" value="2.5">
                             </div>
                         </div>
                     </div>
                     <div class="info-form">
                         <label for="game-speed"> Game Speed </label>
                         <input type="number" class="form-control info-input" id="game-speed" value="85">
-                    </div>
-                     <div class="col-sm-12 alert alert-danger alert-dismissable" id="error-container">
-                        <a href="#" class="close" aria-label="close">&times;</a>
-                        <p id="error-message"> </p>
-                    </div>
-                    <div class="btn-container col-sm-12">
-                        <button id = 'start' type="button" class="start-game btn btn-primary" onclick="startGame();">Start new game</button>
+
                     </div>
 
-                   
+                    <div class="info-form">
+                        <div class="form-horizontal">
+                        <label> Control Mode </label>
+                            <div class="form-group">
+                                <div class="col-sm-6">
+                                    <input type="radio" name="ctrl" value=1 onClick="ctrlModeChanged();" id="single" checked="true">Single 
+                                </div>       
+                                <div class="col-sm-6">
+                                    <input type="radio" name="ctrl" value=1 onClick="ctrlModeChanged();" id="multi">Separate 
+                                </div>
+                            </div>
+                        </div>
+                    </div>                   
                 </div>
             </div>
+            <h1 class="page-header game-title"> Hockey Game </h1> 
+
             <div class="game col-sm-9" id='game-container'>
-                <div  style="background-color: #dfdfdf;">
-                    <h2 class="information-header;" style="margin-bottom: 1%;">Game Status</h2>
-                    <label>Message: </label><label id='msg'></label><br>
+                <div  style="background-color: #efefd8; border-radius: 10px; padding-left:15px; padding-top:1px;">
+                    <h2 class="information-header;">Game Status</h2>
                     <label id='time'></label> <br>
-                    <label>State: </label>
-                    <label id='state'>Ready.</label>
-                    <div class="form-group">
-                        <label id="p1-name"> Player 1: </label> <br>
-                        <label style="margin-left: 2.5%;">Add: </label>
-                        <label id="p1-cdadd" style="color:#00ff00; min-width: max-content;"> Ready. </label>&nbsp;&nbsp;&nbsp;&nbsp;
-                        <label>Remove: </label>
-                        <label id="p1-cdrm" style="color:#ff0000; min-width: max-content;"> Wait for walls. </label>&nbsp;&nbsp;&nbsp;&nbsp;
-                        <label>Score: </label>
-                        <label id="p1-score" style="min-width: max-content;"> Not started. </label>&nbsp;&nbsp;&nbsp;&nbsp;
 
-                        <div style="background-color: #eeeeee; width: 95%; height: auto; margin-left: auto;margin-right: auto; border-radius: 10px;">
-                            <div style="background-color: #99D6D3; width: 100%; color: #777777; text-align: center; border-radius: 10px;max-height: 100%" id="p1ml">Materials Left</div>
+                    <div class="form-horizontal">
+                        <div class="form-group" style="font-size:larger;">
+                            <div class="col-sm-6" >
+                                <label>Message: </label>
+                                <label id='state'>Ready.</label>
+                            </div>       
+                            <div class="col-sm-6" id="sc" hidden="true">
+                                <label>Score: </label>
+                                <label id="total-score"> Not started. </label>
+                            </div>
                         </div>
-
                     </div>
-                    <div class="form-group">
-                        <label id="p2-name" style="margin-left: auto; margin-right: auto; text-align: center;"> Player 2: </label> <br>
-                        <label style="margin-left: 2.5%;">Add: </label>
-                        <label id="p2-cdadd" style="color:#00ff00; min-width: max-content;"> Ready. </label>&nbsp;&nbsp;&nbsp;&nbsp;
-                        <label>Remove: </label>
-                        <label id="p2-cdrm" style="color:#ff0000; min-width: max-content;"> Wait for walls. </label>&nbsp;&nbsp;&nbsp;&nbsp;
-                        <label>Score: </label>
-                        <label id="p2-score" style="min-width: max-content;"> Not started. </label>&nbsp;&nbsp;&nbsp;&nbsp;
-
-                        <div style="background-color: #eeeeee; width: 95%; height: auto; margin-left: auto;margin-right: auto; border-radius: 10px;">
-                            <div style="background-color: #FFBBC6; width: 100%; color: #777777; text-align: center; border-radius: 10px;max-height: 100%" id="p2ml">Materials Left</div>
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <label id="p1-name" style=" font-size: larger;"> Player 1: </label> &nbsp;&nbsp;&nbsp;&nbsp;
+                                <label style="margin-left: 2.5%;">Add: </label>
+                                <label id="p1-cdadd" style="color:#7DC97B; min-width: max-content;"> Ready. </label>&nbsp;&nbsp;&nbsp;&nbsp;
+                                <label style="">Remove: </label>
+                                <label id="p1-cdrm" style="color:#ff0000; min-width: max-content;"> Wait for walls. </label>&nbsp;&nbsp;&nbsp;&nbsp;
+                            </div>
+                            <div class="col-sm-6" id="sc1">
+                                <label style="">Score: </label>
+                                <label id="p1-score" style="min-width: max-content;"> Not started. </label>&nbsp;&nbsp;&nbsp;&nbsp;
+                            </div>
                         </div>
-                        <label> </label>
-
+                    </div> 
+                    <div style="background-color: #eeeeee; width: 95%; max-height: 100%; margin-top: -15px;margin-bottom:10px;margin-left: auto;margin-right: auto; border-radius: 10px;">
+                        <div style="background-color: #99D6D3; width: 100%; color: #777777; text-align: center; border-radius: 10px;max-height: 100%" id="p1ml">Materials Left</div>
                     </div>
+
+
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <label id="p2-name" style=" font-size: larger;"> Player 2: </label>  &nbsp;&nbsp;&nbsp;&nbsp;
+                                <label style="margin-left: 2.5%;">Add: </label>
+                                <label id="p2-cdadd" style="color:#7DC97B; min-width: max-content;"> Ready. </label>&nbsp;&nbsp;&nbsp;&nbsp;
+                                <label style="">Remove: </label>
+                                <label id="p2-cdrm" style="color:#ff0000; min-width: max-content;"> Wait for walls. </label>&nbsp;&nbsp;&nbsp;&nbsp;
+                            </div>
+                            <div class="col-sm-6" id="sc2">
+                                <label style="">Score: </label>
+                                <label id="p2-score" style="min-width: max-content;"> Not started. </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="background-color: #eeeeee; width: 95%;  margin-top: -15px;max-height: 100; margin-left: auto;margin-right: auto; border-radius: 10px;">
+                        <div style="background-color: #FFBBC6; width: 100%; color: #777777; text-align: center; border-radius: 10px;max-height: 100%" id="p2ml">Materials Left</div>
+                    </div>
+                    <label> </label>
+
 
                 </div>
             </div>
