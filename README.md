@@ -3,4 +3,4 @@
 A Hockey Game.
 
 Preview:
-https://billsun/Hockey
+https://billsun.dev/Hockey
